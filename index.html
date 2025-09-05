@@ -212,22 +212,8 @@
                 </div>
 
                 <div class="py-3">
-                    <nav aria-label="Page navigation example">
-                        <ul class="pagination">
-                            <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                            </li>
-                            <li class="page-item"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                            </li>
-                        </ul>
+                    <nav aria-label="Page navigation">
+                      <ul class="pagination"></ul>
                     </nav>
                 </div>
             </div>
@@ -265,5 +251,78 @@
             </footer>
         </div>
     </section>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const cards = document.querySelectorAll(".col");
+            const cardsPerPage = 6;
+            const totalPages = Math.ceil(cards.length / cardsPerPage);
+            let currentPage = 1;
+
+            const pagination = document.querySelector(".pagination");
+
+            function createPagination() {
+                pagination.innerHTML = "";
+
+                // Previous button
+                const prev = document.createElement("li");
+                prev.className = "page-item";
+                prev.innerHTML = `<a class="page-link" href="#" aria-label="Previous">&laquo;</a>`;
+                prev.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    showPage(currentPage - 1);
+                });
+                pagination.appendChild(prev);
+
+                // Page numbers
+                for (let i = 1; i <= totalPages; i++) {
+                    const li = document.createElement("li");
+                    li.className = "page-item";
+                    li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+                    li.addEventListener("click", function (e) {
+                        e.preventDefault();
+                        showPage(i);
+                    });
+                    pagination.appendChild(li);
+                }
+
+                // Next button
+                const next = document.createElement("li");
+                next.className = "page-item";
+                next.innerHTML = `<a class="page-link" href="#" aria-label="Next">&raquo;</a>`;
+                next.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    showPage(currentPage + 1);
+                });
+                pagination.appendChild(next);
+            }
+
+            function showPage(page) {
+                if (page < 1) page = 1;
+                if (page > totalPages) page = totalPages;
+                currentPage = page;
+
+                // hide all
+                cards.forEach(c => c.style.display = "none");
+
+                // show only current slice
+                const start = (page - 1) * cardsPerPage;
+                const end = start + cardsPerPage;
+                for (let i = start; i < end && i < cards.length; i++) {
+                    cards[i].style.display = "block";
+                }
+
+                // update active state
+                const items = pagination.querySelectorAll(".page-item");
+                items.forEach((li, idx) => li.classList.remove("active"));
+                items[page].classList.add("active"); // shift by 1 because [0] is Prev
+            }
+
+            createPagination();
+            showPage(1);
+        });
+    </script>
+
+
 </body>
 </html>
